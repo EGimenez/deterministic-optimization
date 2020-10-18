@@ -24,22 +24,24 @@ optimize_f_ij <- function(S, K, i, j){
 exercise_3 <- function(S, pre = 1e-1, max_iter = 100){
   
   n <- dim(S)[1]
-  K <- diag(n)
-  K <- K - 0.1*matrix(1, nrow = n, ncol = n) 
-  # K <- S
-  # 
-  # for (i in 1:n){
-  #   for (j in 1:n){
-  #     if (i!= j){
-  #       if (K[i, j]>0){
-  #         K[i, j] <- -K[i, j]
-  #       }
-  #     }
-  #   }
-  # }
+  
+  eps <- 0.1
+  
+  while (TRUE){
+    K <- diag(n)
+    K <- K - eps*matrix(1, nrow = n, ncol = n) 
+    
+    if (det(K)>0){
+      break
+      }else{
+        eps<-eps/2
+      } 
+  }
+
   
   last_value <- Inf
   
+  # We make sure that at least each component is maximized once
   for (i in 1:n){
     for (j in i:n){
       aux <- optimize_f_ij(S, K, i, j)
@@ -47,6 +49,7 @@ exercise_3 <- function(S, pre = 1e-1, max_iter = 100){
     }
   }
   
+  # Here we could be fancyer
   for (mi in 1:max_iter){
     ij = find_ij(S, K)
     
@@ -55,12 +58,6 @@ exercise_3 <- function(S, pre = 1e-1, max_iter = 100){
     
     aux <- optimize_f_ij(S, K, i, j)
     K <- aux
-    
-    # if (abs(last_value - aux[2]$value)< pre){
-    #   break
-    # }else{
-    #   last_value <- aux[2]$value
-    # }
   }
   round(K, 2)
 }

@@ -133,6 +133,7 @@ find_ij <- function(S, K){
 }
 #===============================
 # testing
+if (FALSE){
 n <- 5     ## Dimension of matrix
 S <- matrix(rnorm(n*n), ncol=n)
 S <- S*t(S)
@@ -193,3 +194,4 @@ K1[2,3] <- 3.14
 K1[3,2] <- 3.14
 print(g(3.14))
 print(tr(S%*%K1))
+}

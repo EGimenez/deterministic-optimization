@@ -134,13 +134,15 @@ my_det_2_fun <- function(K, x){
       if (i == 1 && j == 1){
         det_ <- det_ + x^2*my_det_0(K[c(3:n), c(3:n)])
       }else{
-        a <- my_sign(i)*K[idx_i[i], 1]
-        b <- my_sign(j)*K[idx_i[-i][j], 2]
+        ax <- idx_i[i]
+        bx <- idx_i[-i][j]
+        a <- my_sign(i)*K[ax, 1]
+        b <- my_sign(j)*K[bx, 2]
         idx_i <- idx_i[-i][-j]
         c <- my_det_0(K[idx_i, idx_j])
-        if (1 %in% idx_i){ 
+        if (ax == 1){ 
           det_ <- det_+my_sign(i)*x*b*c
-        }else if (2 %in% idx_i){
+        }else if (bx == 2){
           det_ <- det_+a*my_sign(j)*x*c
         }else
           det_ <- det_+a*b*c
@@ -160,13 +162,18 @@ my_det_ij <- function(K, i, j, x=NULL){
   idx_i <- c(1:n)
   idx_j <- c(1:n)
   if (i !=j){
-    idx_i <- permute(idx_i, i, 1)
-    idx_j <- permute(idx_j, j, 1)
-    j2 <- match(j, idx_i)
-    i2 <- match(i, idx_j)
-    idx_i <- permute(idx_i, j2, 2)
-    idx_j <- permute(idx_j, i2, 2)
-    return(my_det_2(K[idx_i, idx_j])*my_sign_perm(i, 1)*my_sign_perm(j, 1)*my_sign_perm(i2, 2)*my_sign_perm(j2, 2))
+    if((i==1 &j==2)|(i==2&j==1)){
+      idx_i <- permute(idx_i, 1, 2)
+      return(-1*my_det_2(K[idx_i, idx_j]))
+    }else{
+      idx_i <- permute(idx_i, i, 1)
+      idx_j <- permute(idx_j, j, 1)
+      j2 <- match(j, idx_i)
+      i2 <- match(i, idx_j)
+      idx_i <- permute(idx_i, j2, 2)
+      idx_j <- permute(idx_j, i2, 2)
+      return(my_det_2(K[idx_i, idx_j])*my_sign_perm(i, 1)*my_sign_perm(j, 1)*my_sign_perm(i2, 2)*my_sign_perm(j2, 2))
+    }
   }else{
     idx_i <- permute(idx_i, i, 1)
     idx_j <- permute(idx_j, j, 1)
@@ -314,7 +321,7 @@ for (i in 1:9){
 }
 
 K <- matrix(nums, ncol=3)
-K <- K+t(K)
+K <- K%*%t(K)
 
 for (i in 1:3){
   for (j in 1:3){
